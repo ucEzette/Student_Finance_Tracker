@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Student Finance Tracker</title>
+  <link rel="stylesheet" href="styles/style.css" />
+</head>
+<body>
+  <a href="#maincontent" class="skip-link">Skip to main content</a>
+
+  <header role="banner">
+    <h1>Student Finance Tracker</h1>
+    <nav role="navigation" aria-label="Main menu">
+      <button id="nav-toggle" aria-controls="nav-links" aria-expanded="false">Menu</button>
+      <ul id="nav-links" hidden>
+        <li><a href="#dashboard">Dashboard</a></li>
+        <li><a href="#add-record">Add Record</a></li>
+        <li><a href="#settings">Settings</a></li>
+        <li><a href="#about">About</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="maincontent" role="main">
+    <!-- Stats Dashboard -->
+    <section id="dashboard" aria-labelledby="dashboard-label">
+      <h2 id="dashboard-label">Dashboard & Stats</h2>
+      <div id="stats"></div>
+    </section>
+
+    <!-- Records Table / Cards -->
+    <section id="records-section" aria-labelledby="records-label">
+      <h2 id="records-label">Records</h2>
+      <div class="search-controls">
+        <label for="searchPattern">Search (regex):</label>
+        <input type="text" id="searchPattern" aria-label="Regex search pattern" />
+        <button id="toggle-case">Case Insensitive</button>
+      </div>
+      <table id="recordsTable" aria-label="Records" role="grid" summary="Table of expense records">
+        <thead>
+          <tr>
+            <th scope="col" data-sort="date">Date</th>
+            <th scope="col" data-sort="description">Description</th>
+            <th scope="col" data-sort="amount">Amount</th>
+            <th scope="col">Category</th>
+            <th scope="col">Actions</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <!-- Add/Edit Record Form -->
+    <section id="add-record" aria-labelledby="addRecordLabel">
+      <h2 id="addRecordLabel">Add / Edit Record</h2>
+      <form id="record-form" aria-describedby="form-help">
+        <label for="description">Description</label>
+        <input type="text" id="description" name="description" required />
+
+        <label for="amount">Amount</label>
+        <input type="number" id="amount" name="amount" required />
+
+        <label for="category">Category</label>
+        <input type="text" id="category" name="category" required />
+
+        <label for="date">Date</label>
+        <input type="date" id="date" name="date" required />
+
+        <button type="submit">Save</button>
+        <button type="button" id="cancelEdit">Cancel</button>
+        <div id="form-help">Fill in the form to add a new record or edit an existing one.</div>
+      </form>
+    </section>
+
+    <!-- Settings -->
+    <section id="settings" aria-labelledby="settingsLabel">
+      <h2 id="settingsLabel">Settings</h2>
+      <!-- Currency, import/export, etc. -->
+      <label for="currency1">Currency 1</label>
+      <input type="number" id="currency1" />
+
+      <!-- import/export controls -->
+      <button id="exportJSON">Export Data</button>
+      <input type="file" id="importFile" accept=".json" />
+    </section>
+
+    <!-- About -->
+    <section id="about" aria-labelledby="aboutLabel">
+      <h2 id="aboutLabel">About</h2>
+      <p>This app helps students track their expenses. Contact me at <a href="mailto:ucheezette@gmail.com">ucheezette@gmail.com</a> or find me on <a href="https://github.com/ucEzette" target="_blank">GitHub</a>.</p>
+    </section>
+  </main>
+
+  <footer role="contentinfo">
+    <p>&copy; 2025 Uche Ezette</p>
+  </footer>
+
+  <script src="scripts/storage.js" type="module"></script>
+  <script src="scripts/validators.js" type="module"></script>
+  <script src="scripts/search.js" type="module"></script>
+  <script src="scripts/state.js" type="module"></script>
+  <script src="scripts/ui.js" type="module"></script>
+  <script src="scripts/app.js" type="module"></script>
+</body>
+</html>
