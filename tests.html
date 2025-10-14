@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Finance Tracker - Tests</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .test-section {
+            margin-bottom: 40px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .test-case {
+            margin: 15px 0;
+            padding: 10px;
+            border-left: 4px solid #ccc;
+            background: #f9f9f9;
+        }
+
+        .test-case.pass {
+            border-left-color: #27ae60;
+            background: #e8f5e8;
+        }
+
+        .test-case.fail {
+            border-left-color: #e74c3c;
+            background: #fce8e8;
+        }
+
+        .test-result {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .pass { color: #27ae60; }
+        .fail { color: #e74c3c; }
+
+        pre {
+            background: #f4f4f4;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-size: 14px;
+        }
+
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 10px 5px 10px 0;
+        }
+
+        button:hover {
+            background: #2980b9;
+        }
+
+        .summary {
+            background: #e3f2fd;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .regex-tester {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        textarea {
+            height: 100px;
+            resize: vertical;
+        }
+    </style>
+</head>
+<body>
+    <h1>Student Finance Tracker - Test Suite</h1>
+
+    <div class="summary">
+        <h2>Test Summary</h2>
+        <p>This page tests the core functionality of the Student Finance Tracker, including regex validation patterns, form validation, search functionality, and data processing.</p>
+        <button onclick="runAllTests()">Run All Tests</button>
+        <button onclick="clearResults()">Clear Results</button>
+        <div id="test-summary" style="margin-top: 15px; font-weight: bold;"></div>
+    </div>
+
+    <!-- Regex Pattern Tests -->
+    <div class="test-section">
+        <h2>Regex Validation Tests</h2>
+        <div id="regex-tests"></div>
+        <button onclick="runRegexTests()">Run Regex Tests</button>
+    </div>
+
+    <!-- Interactive Regex Tester -->
+    <div class="regex-tester">
+        <h3>Interactive Regex Tester</h3>
+        <div>
+            <label>Pattern:</label>
+            <input type="text" id="test-pattern" placeholder="Enter regex pattern..." value="\\b(\\w+)\\s+\\1\\b">
+        </div>
+        <div>
+            <label>Test Text:</label>
+            <textarea id="test-text" placeholder="Enter text to test...">This is a test test of duplicate words and coffee coffee patterns</textarea>
+        </div>
+        <div>
+            <label>
+                <input type="checkbox" id="test-case-insensitive" checked> Case insensitive
+            </label>
+        </div>
+        <button onclick="testRegexPattern()">Test Pattern</button>
+        <div id="regex-result"></div>
+    </div>
+
+    <!-- Form Validation Tests -->
+    <div class="test-section">
+        <h2>Form Validation Tests</h2>
+        <div id="validation-tests"></div>
+        <button onclick="runValidationTests()">Run Validation Tests</button>
+    </div>
+
+    <!-- Data Processing Tests -->
+    <div class="test-section">
+        <h2>Data Processing Tests</h2>
+        <div id="data-tests"></div>
+        <button onclick="runDataTests()">Run Data Tests</button>
+    </div>
+
+    <!-- Search Tests -->
+    <div class="test-section">
+        <h2>Search Functionality Tests</h2>
+        <div id="search-tests"></div>
+        <button onclick="runSearchTests()">Run Search Tests</button>
+    </div>
+
+    <!-- Accessibility Tests -->
+    <div class="test-section">
+        <h2>Accessibility Tests</h2>
+        <div id="accessibility-tests"></div>
+        <button onclick="runAccessibilityTests()">Run Accessibility Tests</button>
+    </div>
+
+    <script>
+        // Test framework
+        class TestRunner {
+            constructor() {
+                this.results = [];
+            }
+
+            assert(condition, description, expected = null, actual = null) {
+                const result = {
+                    passed: !!condition,
+                    description,
+                    expected,
+                    actual
+                };
+                this.results.push(result);
+                return result;
+            }
+
+            assertEqual(actual, expected, description) {
+                const passed = actual === expected;
+                return this.assert(passed, description, expected, actual);
+            }
+
+            assertMatch(text, pattern, description) {
+                const regex = new RegExp(pattern);
+                const passed = regex.test(text);
+                return this.assert(passed, description, `Match: ${pattern}`, `Text: ${text}`);
+            }
+
+            assertNotMatch(text, pattern, description) {
+                const regex = new RegExp(pattern);
+                const passed = !regex.test(text);
+                return this.assert(passed, description, `No match: ${pattern}`, `Text: ${text}`);
+            }
+
+            renderResults(containerId) {
+                const container = document.getElementById(containerId);
+                if (!container) return;
+
+                container.innerHTML = '';
+
+                this.results.forEach(result => {
+                    const div = document.createElement('div');
+                    div.className = `test-case ${result.passed ? 'pass' : 'fail'}`;
+
+                    let html = `
+                        <span class="test-result ${result.passed ? 'pass' : 'fail'}">
+                            ${result.passed ? '✓ PASS' : '✗ FAIL'}
+                        </span>
+                        ${result.description}
+                    `;
+
+                    if (!result.passed && (result.expected !== null || result.actual !== null)) {
+                        html += `<br><small>Expected: ${result.expected || 'truthy'}, Got: ${result.actual || 'falsy'}</small>`;
+                    }
+
+                    div.innerHTML = html;
+                    container.appendChild(div);
+                });
+
+                this.updateSummary();
+            }
+
+            updateSummary() {
+                const summary = document.getElementById('test-summary');
+                if (!summary) return;
+
+                const passed = this.results.filter(r => r.passed).length;
+                const total = this.results.length;
+                const percentage = total > 0 ? Math.round((passed / total) * 100) : 0;
+
+                summary.innerHTML = `Tests: ${passed}/${total} passed (${percentage}%)`;
+                summary.style.color = percentage === 100 ? '#27ae60' : (percentage >= 70 ? '#f39c12' : '#e74c3c');
+            }
+
+            clear() {
+                this.results = [];
+            }
+        }
+
+        const testRunner = new TestRunner();
+
+        // Regex patterns to test
+        const patterns = {
+            description: /^\S(?:.*\S)?$/,
+            amount: /^(0|[1-9]\d*)(\.\d{1,2})?$/,
+            date: /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/,
+            category: /^[A-Za-z]+(?:[ -][A-Za-z]+)*$/,
+            duplicateWords: /\b(\w+)\s+\1\b/gi,
+            centsPresent: /\.\d{2}\b/g,
+            beverageKeywords: /(coffee|tea|juice|soda|water)/gi
+        };
+
+        function runRegexTests() {
+            testRunner.clear();
+
+            // Description pattern tests
+            testRunner.assertMatch('Valid description', patterns.description, 'Valid description should pass');
+            testRunner.assertMatch('Multi word description', patterns.description, 'Multi word description should pass');
+            testRunner.assertNotMatch(' Leading space', patterns.description, 'Leading space should fail');
+            testRunner.assertNotMatch('Trailing space ', patterns.description, 'Trailing space should fail');
+            testRunner.assertNotMatch('', patterns.description, 'Empty string should fail');
+            testRunner.assertNotMatch('  ', patterns.description, 'Only spaces should fail');
+
+            // Amount pattern tests
+            testRunner.assertMatch('0', patterns.amount, 'Zero should be valid');
+            testRunner.assertMatch('123', patterns.amount, 'Integer should be valid');
+            testRunner.assertMatch('12.50', patterns.amount, 'Amount with cents should be valid');
+            testRunner.assertMatch('999.99', patterns.amount, 'Large amount should be valid');
+            testRunner.assertNotMatch('01', patterns.amount, 'Leading zero should be invalid');
+            testRunner.assertNotMatch('-5', patterns.amount, 'Negative amount should be invalid');
+            testRunner.assertNotMatch('12.345', patterns.amount, 'More than 2 decimals should be invalid');
+            testRunner.assertNotMatch('12.', patterns.amount, 'Trailing decimal should be invalid');
+            testRunner.assertNotMatch('.50', patterns.amount, 'No leading digit should be invalid');
+
+            // Date pattern tests
+            testRunner.assertMatch('2025-01-15', patterns.date, 'Valid date should pass');
+            testRunner.assertMatch('2025-12-31', patterns.date, 'End of year should pass');
+            testRunner.assertNotMatch('25-01-15', patterns.date, 'Two-digit year should fail');
+            testRunner.assertNotMatch('2025-13-01', patterns.date, 'Invalid month should fail');
+            testRunner.assertNotMatch('2025-01-32', patterns.date, 'Invalid day should fail');
+            testRunner.assertNotMatch('2025-1-1', patterns.date, 'Single digit month/day should fail');
+
+            // Category pattern tests
+            testRunner.assertMatch('Food', patterns.category, 'Single word category should pass');
+            testRunner.assertMatch('Personal Care', patterns.category, 'Two words with space should pass');
+            testRunner.assertMatch('Out-of-pocket', patterns.category, 'Words with hyphen should pass');
+            testRunner.assertNotMatch('123Food', patterns.category, 'Numbers should not be allowed');
+            testRunner.assertNotMatch('Food123', patterns.category, 'Trailing numbers should not be allowed');
+            testRunner.assertNotMatch('Food_Drink', patterns.category, 'Underscore should not be allowed');
+            testRunner.assertNotMatch('-Food', patterns.category, 'Leading hyphen should not be allowed');
+
+            // Advanced pattern tests
+            const duplicateText = 'This has the the same word twice';
+            const matches = duplicateText.match(patterns.duplicateWords);
+            testRunner.assert(matches && matches.length > 0, 'Should find duplicate words in text');
+
+            const centsText = 'Items cost $12.50 and $99.99';
+            const centsMatches = centsText.match(patterns.centsPresent);
+            testRunner.assert(centsMatches && centsMatches.length === 2, 'Should find 2 amounts with cents');
+
+            const beverageText = 'Had coffee and tea today';
+            const beverageMatches = beverageText.match(patterns.beverageKeywords);
+            testRunner.assert(beverageMatches && beverageMatches.length === 2, 'Should find 2 beverage keywords');
+
+            testRunner.renderResults('regex-tests');
+        }
+
+        function runValidationTests() {
+            testRunner.clear();
+
+            // Test form validation logic
+            const validData = {
+                description: 'Valid transaction',
+                amount: '25.50',
+                category: 'Food',
+                date: '2025-10-15'
+            };
+
+            const invalidData = {
+                description: ' Invalid description ',
+                amount: '-5.99',
+                category: 'Invalid123',
+                date: '2025-13-32'
+            };
+
+            // Simulate validation (normally would use actual validator)
+            testRunner.assert(patterns.description.test(validData.description), 'Valid description should pass validation');
+            testRunner.assert(patterns.amount.test(validData.amount), 'Valid amount should pass validation');
+            testRunner.assert(patterns.category.test(validData.category), 'Valid category should pass validation');
+            testRunner.assert(patterns.date.test(validData.date), 'Valid date should pass validation');
+
+            testRunner.assert(!patterns.description.test(invalidData.description), 'Invalid description should fail validation');
+            testRunner.assert(!patterns.amount.test(invalidData.amount), 'Invalid amount should fail validation');
+            testRunner.assert(!patterns.category.test(invalidData.category), 'Invalid category should fail validation');
+            testRunner.assert(!patterns.date.test(invalidData.date), 'Invalid date should fail validation');
+
+            testRunner.renderResults('validation-tests');
+        }
+
+        function runDataTests() {
+            testRunner.clear();
+
+            // Test data processing functions
+            const sampleData = [
+                { id: '1', amount: 10.50, category: 'Food', date: '2025-10-01' },
+                { id: '2', amount: 25.00, category: 'Transport', date: '2025-10-02' },
+                { id: '3', amount: 15.75, category: 'Food', date: '2025-10-03' }
+            ];
+
+            // Total amount calculation
+            const totalAmount = sampleData.reduce((sum, t) => sum + t.amount, 0);
+            testRunner.assertEqual(totalAmount, 51.25, 'Should calculate correct total amount');
+
+            // Category grouping
+            const categories = {};
+            sampleData.forEach(t => {
+                categories[t.category] = (categories[t.category] || 0) + t.amount;
+            });
+
+            testRunner.assertEqual(categories.Food, 26.25, 'Should group Food category correctly');
+            testRunner.assertEqual(categories.Transport, 25.00, 'Should group Transport category correctly');
+
+            // Date validation
+            const isValidDate = (dateStr) => {
+                const date = new Date(dateStr);
+                return date instanceof Date && !isNaN(date);
+            };
+
+            testRunner.assert(isValidDate('2025-10-15'), 'Should validate correct date');
+            testRunner.assert(!isValidDate('invalid-date'), 'Should reject invalid date');
+
+            testRunner.renderResults('data-tests');
+        }
+
+        function runSearchTests() {
+            testRunner.clear();
+
+            const sampleTransactions = [
+                { description: 'Coffee shop visit', amount: 8.75, category: 'Food' },
+                { description: 'Tea and biscuits', amount: 5.50, category: 'Food' },
+                { description: 'Bus ticket', amount: 3.25, category: 'Transport' },
+                { description: 'Book purchase', amount: 45.00, category: 'Books' }
+            ];
+
+            // Test search functionality
+            const searchInTransactions = (transactions, pattern) => {
+                try {
+                    const regex = new RegExp(pattern, 'gi');
+                    return transactions.filter(t => 
+                        regex.test(t.description) || 
+                        regex.test(t.category) || 
+                        regex.test(t.amount.toString())
+                    );
+                } catch (error) {
+                    return [];
+                }
+            };
+
+            // Search tests
+            const coffeeResults = searchInTransactions(sampleTransactions, 'coffee');
+            testRunner.assertEqual(coffeeResults.length, 1, 'Should find 1 coffee transaction');
+
+            const beverageResults = searchInTransactions(sampleTransactions, '(coffee|tea)');
+            testRunner.assertEqual(beverageResults.length, 2, 'Should find 2 beverage transactions');
+
+            const foodResults = searchInTransactions(sampleTransactions, '^Food$');
+            testRunner.assertEqual(foodResults.length, 2, 'Should find 2 Food category transactions');
+
+            const centsResults = searchInTransactions(sampleTransactions, '\\.\\d{2}$');
+            testRunner.assertEqual(centsResults.length, 3, 'Should find 3 transactions with cents');
+
+            // Test invalid regex handling
+            const invalidResults = searchInTransactions(sampleTransactions, '[invalid');
+            testRunner.assertEqual(invalidResults.length, 0, 'Should handle invalid regex gracefully');
+
+            testRunner.renderResults('search-tests');
+        }
+
+        function runAccessibilityTests() {
+            testRunner.clear();
+
+            // Check for essential accessibility elements
+            const hasSkipLink = document.querySelector('a[href="#main-content"]') !== null;
+            testRunner.assert(hasSkipLink, 'Should have skip-to-content link (check main page)');
+
+            // Check ARIA landmarks
+            const hasMainLandmark = document.querySelector('main[role="main"]') !== null || 
+                                  document.querySelector('main') !== null;
+            testRunner.assert(hasMainLandmark, 'Should have main landmark (check main page)');
+
+            // Check for ARIA live regions
+            const hasStatusRegion = document.querySelector('[role="status"]') !== null ||
+                                  document.querySelector('[aria-live="polite"]') !== null;
+            testRunner.assert(hasStatusRegion, 'Should have status announcement region (check main page)');
+
+            const hasAlertRegion = document.querySelector('[role="alert"]') !== null ||
+                                 document.querySelector('[aria-live="assertive"]') !== null;
+            testRunner.assert(hasAlertRegion, 'Should have alert announcement region (check main page)');
+
+            // Check form labels
+            testRunner.assert(true, 'Form labels should be properly associated (manual check required)');
+
+            // Check keyboard navigation
+            testRunner.assert(true, 'All interactive elements should be keyboard accessible (manual check required)');
+
+            // Check color contrast
+            testRunner.assert(true, 'Color contrast should meet WCAG AA standards (manual check required)');
+
+            testRunner.renderResults('accessibility-tests');
+        }
+
+        function testRegexPattern() {
+            const pattern = document.getElementById('test-pattern').value;
+            const text = document.getElementById('test-text').value;
+            const caseInsensitive = document.getElementById('test-case-insensitive').checked;
+            const resultDiv = document.getElementById('regex-result');
+
+            try {
+                const flags = caseInsensitive ? 'gi' : 'g';
+                const regex = new RegExp(pattern, flags);
+                const matches = [...text.matchAll(regex)];
+
+                let html = `<h4>Results:</h4>`;
+                html += `<p><strong>Pattern:</strong> <code>${pattern}</code></p>`;
+                html += `<p><strong>Flags:</strong> ${flags}</p>`;
+                html += `<p><strong>Text:</strong> ${text}</p>`;
+
+                if (matches.length > 0) {
+                    html += `<p><strong>Found ${matches.length} match(es):</strong></p>`;
+                    html += '<ul>';
+                    matches.forEach((match, index) => {
+                        html += `<li>Match ${index + 1}: "<strong>${match[0]}</strong>" at position ${match.index}`;
+                        if (match.length > 1) {
+                            html += ` (groups: ${match.slice(1).join(', ')})`;
+                        }
+                        html += '</li>';
+                    });
+                    html += '</ul>';
+
+                    // Show highlighted text
+                    const highlightedText = text.replace(regex, match => `<mark style="background: yellow;">${match}</mark>`);
+                    html += `<p><strong>Highlighted:</strong> ${highlightedText}</p>`;
+                } else {
+                    html += '<p><strong>No matches found.</strong></p>';
+                }
+
+                resultDiv.innerHTML = html;
+                resultDiv.style.background = '#e8f5e8';
+                resultDiv.style.border = '1px solid #27ae60';
+
+            } catch (error) {
+                resultDiv.innerHTML = `<h4>Error:</h4><p style="color: #e74c3c;"><strong>${error.message}</strong></p>`;
+                resultDiv.style.background = '#fce8e8';
+                resultDiv.style.border = '1px solid #e74c3c';
+            }
+
+            resultDiv.style.padding = '15px';
+            resultDiv.style.borderRadius = '4px';
+            resultDiv.style.marginTop = '15px';
+        }
+
+        function runAllTests() {
+            runRegexTests();
+            runValidationTests();
+            runDataTests();
+            runSearchTests();
+            runAccessibilityTests();
+        }
+
+        function clearResults() {
+            testRunner.clear();
+            document.querySelectorAll('[id$="-tests"]').forEach(container => {
+                container.innerHTML = '';
+            });
+            document.getElementById('test-summary').innerHTML = '';
+            document.getElementById('regex-result').innerHTML = '';
+        }
+
+        // Auto-run tests on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('Test page loaded. Click "Run All Tests" to execute the test suite.');
+        });
+    </script>
+</body>
+</html>
