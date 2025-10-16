@@ -1,0 +1,232 @@
+{
+  "transactions": [
+    {
+      "id": "txn_001",
+      "description": "Emergency lunch at campus cafeteria",
+      "amount": 12.50,
+      "category": "Food",
+      "date": "2025-10-15",
+      "createdAt": "2025-10-15T12:30:00Z",
+      "updatedAt": "2025-10-15T12:30:00Z"
+    },
+    {
+      "id": "txn_002",
+      "description": "Organic Chemistry textbook - very very expensive edition",
+      "amount": 289.99,
+      "category": "Books",
+      "date": "2025-10-14",
+      "createdAt": "2025-10-14T14:15:00Z",
+      "updatedAt": "2025-10-14T14:15:00Z"
+    },
+    {
+      "id": "txn_003",
+      "description": "Monthly unlimited bus pass for transportation",
+      "amount": 65.00,
+      "category": "Transport",
+      "date": "2025-10-01",
+      "createdAt": "2025-10-01T09:00:00Z",
+      "updatedAt": "2025-10-01T09:00:00Z"
+    },
+    {
+      "id": "txn_004",
+      "description": "Coffee coffee at Starbucks with friends",
+      "amount": 8.75,
+      "category": "Entertainment",
+      "date": "2025-10-13",
+      "createdAt": "2025-10-13T16:45:00Z",
+      "updatedAt": "2025-10-13T16:45:00Z"
+    },
+    {
+      "id": "txn_005",
+      "description": "Lab fee payment for chemistry semester",
+      "amount": 150.00,
+      "category": "Fees",
+      "date": "2025-09-30",
+      "createdAt": "2025-09-30T11:20:00Z",
+      "updatedAt": "2025-09-30T11:20:00Z"
+    },
+    {
+      "id": "txn_006",
+      "description": "Pizza dinner with study group at Luigi's",
+      "amount": 23.45,
+      "category": "Food",
+      "date": "2025-10-12",
+      "createdAt": "2025-10-12T19:30:00Z",
+      "updatedAt": "2025-10-12T19:30:00Z"
+    },
+    {
+      "id": "txn_007",
+      "description": "Movie tickets for Avengers screening",
+      "amount": 15.99,
+      "category": "Entertainment",
+      "date": "2025-10-11",
+      "createdAt": "2025-10-11T20:00:00Z",
+      "updatedAt": "2025-10-11T20:00:00Z"
+    },
+    {
+      "id": "txn_008",
+      "description": "Office supplies: pens, notebooks, and highlighters",
+      "amount": 27.50,
+      "category": "Other",
+      "date": "2025-10-09",
+      "createdAt": "2025-10-09T13:45:00Z",
+      "updatedAt": "2025-10-09T13:45:00Z"
+    },
+    {
+      "id": "txn_009",
+      "description": "Tea tea and biscuits at campus café",
+      "amount": 4.25,
+      "category": "Food",
+      "date": "2025-10-08",
+      "createdAt": "2025-10-08T10:15:00Z",
+      "updatedAt": "2025-10-08T10:15:00Z"
+    },
+    {
+      "id": "txn_010",
+      "description": "Gym membership annual renewal fee",
+      "amount": 299.00,
+      "category": "Other",
+      "date": "2025-10-05",
+      "createdAt": "2025-10-05T08:00:00Z",
+      "updatedAt": "2025-10-05T08:00:00Z"
+    },
+    {
+      "id": "txn_011",
+      "description": "Late night emergency snack run",
+      "amount": 6.99,
+      "category": "Food",
+      "date": "2025-09-28",
+      "createdAt": "2025-09-28T23:30:00Z",
+      "updatedAt": "2025-09-28T23:30:00Z"
+    },
+    {
+      "id": "txn_012",
+      "description": "Campus parking fee for visitor",
+      "amount": 3.50,
+      "category": "Transport",
+      "date": "2025-10-14",
+      "createdAt": "2025-10-14T14:00:00Z",
+      "updatedAt": "2025-10-14T14:00:00Z"
+    },
+    {
+      "id": "txn_013",
+      "description": "Huge Calculus reference book from Amazon",
+      "amount": 156.78,
+      "category": "Books",
+      "date": "2025-09-25",
+      "createdAt": "2025-09-25T16:22:00Z",
+      "updatedAt": "2025-09-25T16:22:00Z"
+    },
+    {
+      "id": "txn_014",
+      "description": "Single gum pack from vending machine",
+      "amount": 0.75,
+      "category": "Other",
+      "date": "2025-10-16",
+      "createdAt": "2025-10-16T09:15:00Z",
+      "updatedAt": "2025-10-16T09:15:00Z"
+    },
+    {
+      "id": "txn_015",
+      "description": "Expensive wine wine for graduation celebration",
+      "amount": 89.50,
+      "category": "Entertainment",
+      "date": "2025-05-15",
+      "createdAt": "2025-05-15T18:30:00Z",
+      "updatedAt": "2025-05-15T18:30:00Z"
+    },
+    {
+      "id": "txn_016",
+      "description": "Concert tickets: Taylor Swift Eras Tour",
+      "amount": 250.00,
+      "category": "Entertainment",
+      "date": "2025-03-20",
+      "createdAt": "2025-03-20T10:00:00Z",
+      "updatedAt": "2025-03-20T10:00:00Z"
+    },
+    {
+      "id": "txn_017",
+      "description": "Subway sandwich and coffee combo meal",
+      "amount": 12.99,
+      "category": "Food",
+      "date": "2025-10-10",
+      "createdAt": "2025-10-10T12:45:00Z",
+      "updatedAt": "2025-10-10T12:45:00Z"
+    },
+    {
+      "id": "txn_018",
+      "description": "University registration fee payment online",
+      "amount": 500.00,
+      "category": "Fees",
+      "date": "2025-08-15",
+      "createdAt": "2025-08-15T14:30:00Z",
+      "updatedAt": "2025-08-15T14:30:00Z"
+    },
+    {
+      "id": "txn_019",
+      "description": "Quick Uber ride to campus during rain",
+      "amount": 18.25,
+      "category": "Transport",
+      "date": "2025-10-07",
+      "createdAt": "2025-10-07T07:45:00Z",
+      "updatedAt": "2025-10-07T07:45:00Z"
+    },
+    {
+      "id": "txn_020",
+      "description": "Special special edition manga collection",
+      "amount": 45.99,
+      "category": "Entertainment",
+      "date": "2025-06-12",
+      "createdAt": "2025-06-12T15:20:00Z",
+      "updatedAt": "2025-06-12T15:20:00Z"
+    }
+  ],
+  "metadata": {
+    "version": "1.0",
+    "created": "2025-10-16T11:23:00Z",
+    "description": "Comprehensive seed data for Student Finance Tracker with edge cases",
+    "totalRecords": 20,
+    "dateRange": {
+      "start": "2025-03-20",
+      "end": "2025-10-16"
+    },
+    "edgeCases": {
+      "duplicateWords": ["coffee coffee", "tea tea", "very very", "wine wine", "special special"],
+      "smallAmounts": [0.75, 3.50, 4.25],
+      "largeAmounts": [289.99, 299.00, 500.00, 250.00],
+      "oldDates": ["2025-03-20", "2025-05-15", "2025-06-12", "2025-08-15"],
+      "recentDates": ["2025-10-14", "2025-10-15", "2025-10-16"],
+      "longDescriptions": [
+        "Organic Chemistry textbook - very very expensive edition",
+        "Office supplies: pens, notebooks, and highlighters",
+        "University registration fee payment online",
+        "Expensive wine wine for graduation celebration"
+      ],
+      "shortDescriptions": [
+        "Single gum pack from vending machine",
+        "Campus parking fee for visitor"
+      ],
+      "trickyStrings": [
+        "Coffee coffee at Starbucks with friends",
+        "Tea tea and biscuits at campus café",
+        "Special special edition manga collection",
+        "Expensive wine wine for graduation celebration"
+      ]
+    },
+    "categories": {
+      "Food": 6,
+      "Books": 3,
+      "Transport": 3,
+      "Entertainment": 5,
+      "Fees": 2,
+      "Other": 3
+    },
+    "amountStatistics": {
+      "min": 0.75,
+      "max": 500.00,
+      "average": 88.97,
+      "withCents": 14,
+      "roundAmounts": 6
+    }
+  }
+}
