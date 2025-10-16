@@ -2,14 +2,49 @@
 
 A responsive, accessible, offline-first web application for tracking student expenses built with vanilla HTML, CSS, and JavaScript. This project demonstrates modern web development practices including mobile-first design, comprehensive accessibility features, clean modular architecture, and progressive web app capabilities.
 
-## 🚀 Live Demo & Video
+## Live Demo & Video
 
 **GitHub Pages:** [https://ucezette.github.io/Student_Finance_Tracker](https://ucezette.github.io/Student_Finance_Tracker)  
 **Demo Video:** [https://youtu.be/example-demo-video](https://youtu.be/example-demo-video) *(Unlisted YouTube link showing keyboard navigation, regex edge cases, and import/export)*
 
-## 📋 Chosen Theme: Student Finance Tracker
+##  Student Finance Tracker
 
 This application helps students manage their expenses, track spending patterns, and stay within budget. It provides comprehensive financial tracking with advanced search capabilities, budget management, insightful analytics, and offline functionality for use anywhere.
+
+## Project Structure
+
+student-finance-tracker/
+├── 📄 index.html                    # Main application HTML 
+├── 🔧 sw.js                        # Service Worker 
+├── 📱 manifest.json                 # PWA manifest 
+├── 🔍 scraper.html                  # jQuery scraping tool 
+├── 🧪 tests.html                    # Test suite 
+├── 📊 seed.json                     # Sample data - 20 records 
+├── 📚 README.md                     # Complete documentation 
+│
+├── 📂 styles/
+│   └── 🎨 main.css                 # Responsive CSS with dark theme 
+│
+├── 📂 scripts/
+│   ├── 🚀 main.js                  # App entry point + PWA features 
+│   ├── 💾 storage.js               # Data persistence + CSV export 
+│   ├── 🔄 state.js                 # State management 
+│   ├── 🖼️ ui.js                    # DOM manipulation 
+│   ├── ✅ validators.js            # Form validation + regex 
+│   ├── 🔍 search.js                # Search functionality 
+│   └── 📈 stats.js                 # Statistics calculations 
+│
+├── 📂 assets/ 
+│   ├── 📂 images/
+│   │   ├── icon-72.png
+│   │   ├── icon-192.png
+│   │   └── icon-512.png
+│   └── 📂 icons/
+│
+└── 📂 tests/ 
+    └── regex-tests.js
+
+
 
 ## ✨ Complete Features List
 
