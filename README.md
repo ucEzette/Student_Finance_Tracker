@@ -5,7 +5,7 @@ A responsive, accessible, offline-first web application for tracking student exp
 ## Live Demo & Video
 
 **GitHub Pages:** [https://ucezette.github.io/Student_Finance_Tracker](https://ucezette.github.io/Student_Finance_Tracker)  
-**Demo Video:** [https://youtu.be/example-demo-video](https://youtu.be/example-demo-video) *(Unlisted YouTube link showing keyboard navigation, regex edge cases, and import/export)*
+**Demo Video:** [https://youtu.be/1280oR3lGmc](https://youtu.be/1280oR3lGmc) *(Unlisted YouTube link showing keyboard navigation, regex edge cases, and import/export)*
 
 ##  Student Finance Tracker
 
