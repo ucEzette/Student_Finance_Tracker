@@ -1,0 +1,122 @@
+{
+  "transactions": [
+    {
+      "id": "txn_001",
+      "description": "Lunch at campus cafeteria",
+      "amount": 12.5,
+      "category": "Food",
+      "date": "2025-10-10",
+      "createdAt": "2025-10-10T12:30:00Z",
+      "updatedAt": "2025-10-10T12:30:00Z"
+    },
+    {
+      "id": "txn_002",
+      "description": "Chemistry textbook - very expensive book",
+      "amount": 189.99,
+      "category": "Books",
+      "date": "2025-10-08",
+      "createdAt": "2025-10-08T14:15:00Z",
+      "updatedAt": "2025-10-08T14:15:00Z"
+    },
+    {
+      "id": "txn_003",
+      "description": "Monthly bus pass",
+      "amount": 45.0,
+      "category": "Transport",
+      "date": "2025-10-05",
+      "createdAt": "2025-10-05T09:00:00Z",
+      "updatedAt": "2025-10-05T09:00:00Z"
+    },
+    {
+      "id": "txn_004",
+      "description": "Coffee with study group friends",
+      "amount": 8.75,
+      "category": "Entertainment",
+      "date": "2025-10-12",
+      "createdAt": "2025-10-12T16:45:00Z",
+      "updatedAt": "2025-10-12T16:45:00Z"
+    },
+    {
+      "id": "txn_005",
+      "description": "Lab fee payment for semester",
+      "amount": 125.0,
+      "category": "Fees",
+      "date": "2025-10-07",
+      "createdAt": "2025-10-07T11:20:00Z",
+      "updatedAt": "2025-10-07T11:20:00Z"
+    },
+    {
+      "id": "txn_006",
+      "description": "Dinner at pizza place downtown",
+      "amount": 18.5,
+      "category": "Food",
+      "date": "2025-10-11",
+      "createdAt": "2025-10-11T19:30:00Z",
+      "updatedAt": "2025-10-11T19:30:00Z"
+    },
+    {
+      "id": "txn_007",
+      "description": "Movie tickets for weekend",
+      "amount": 22.0,
+      "category": "Entertainment",
+      "date": "2025-10-09",
+      "createdAt": "2025-10-09T20:00:00Z",
+      "updatedAt": "2025-10-09T20:00:00Z"
+    },
+    {
+      "id": "txn_008",
+      "description": "Office supplies and pens",
+      "amount": 15.75,
+      "category": "Other",
+      "date": "2025-10-06",
+      "createdAt": "2025-10-06T13:45:00Z",
+      "updatedAt": "2025-10-06T13:45:00Z"
+    },
+    {
+      "id": "txn_009",
+      "description": "Tea tea and more tea",
+      "amount": 4.25,
+      "category": "Food",
+      "date": "2025-10-13",
+      "createdAt": "2025-10-13T10:15:00Z",
+      "updatedAt": "2025-10-13T10:15:00Z"
+    },
+    {
+      "id": "txn_010",
+      "description": "Gym membership monthly fee",
+      "amount": 35.0,
+      "category": "Other",
+      "date": "2025-10-01",
+      "createdAt": "2025-10-01T08:00:00Z",
+      "updatedAt": "2025-10-01T08:00:00Z"
+    },
+    {
+      "id": "txn_011",
+      "description": "Late night snack run",
+      "amount": 6.99,
+      "category": "Food",
+      "date": "2025-09-28",
+      "createdAt": "2025-09-28T23:30:00Z",
+      "updatedAt": "2025-09-28T23:30:00Z"
+    },
+    {
+      "id": "txn_012",
+      "description": "Parking fee on campus",
+      "amount": 3.5,
+      "category": "Transport",
+      "date": "2025-10-14",
+      "createdAt": "2025-10-14T14:00:00Z",
+      "updatedAt": "2025-10-14T14:00:00Z"
+    }
+  ],
+  "metadata": {
+    "version": "1.0",
+    "created": "2025-10-14T15:00:00Z",
+    "description": "Sample financial data for Student Finance Tracker",
+    "totalRecords": 12,
+    "dateRange": {
+      "start": "2025-09-28",
+      "end": "2025-10-14"
+    }
+  }
+}
