@@ -29,7 +29,7 @@
     },
     {
       "id": "txn_004",
-      "description": "Coffee coffee at Starbucks with friends",
+      "description": "Coffee coffee at javaHouse Kigali with friends",
       "amount": 8.75,
       "category": "Entertainment",
       "date": "2025-10-13",
@@ -38,7 +38,7 @@
     },
     {
       "id": "txn_005",
-      "description": "Lab fee payment for chemistry semester",
+      "description": "Fee payment for ikaze cultural day event",
       "amount": 150.00,
       "category": "Fees",
       "date": "2025-09-30",
@@ -47,7 +47,7 @@
     },
     {
       "id": "txn_006",
-      "description": "Pizza dinner with study group at Luigi's",
+      "description": "Pizza dinner with study group at Simba",
       "amount": 23.45,
       "category": "Food",
       "date": "2025-10-12",
@@ -56,7 +56,7 @@
     },
     {
       "id": "txn_007",
-      "description": "Movie tickets for Avengers screening",
+      "description": "Movie tickets for Avengers screening at canal olympia",
       "amount": 15.99,
       "category": "Entertainment",
       "date": "2025-10-11",
