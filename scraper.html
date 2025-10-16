@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML Scraper - Finance Tracker</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+            background: #f8f9fa;
+        }
+        
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+        
+        .section {
+            margin: 30px 0;
+            padding: 20px;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+        }
+        
+        .section h2 {
+            color: #34495e;
+            margin-top: 0;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #dee2e6;
+            border-radius: 4px;
+            font-size: 14px;
+            margin-bottom: 15px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        input:focus, textarea:focus, select:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+        
+        textarea {
+            height: 200px;
+            resize: vertical;
+        }
+        
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px 10px 0;
+            transition: background 0.3s;
+        }
+        
+        button:hover {
+            background: #2980b9;
+        }
+        
+        .danger {
+            background: #e74c3c;
+        }
+        
+        .danger:hover {
+            background: #c0392b;
+        }
+        
+        .results {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .results h3 {
+            margin-top: 0;
+            color: #27ae60;
+        }
+        
+        .results pre {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            font-size: 13px;
+        }
+        
+        .error {
+            background: #ffeaea;
+            border-color: #e74c3c;
+            color: #c0392b;
+        }
+        
+        .examples {
+            background: #e8f5e8;
+            border: 1px solid #27ae60;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        
+        .examples h4 {
+            color: #27ae60;
+            margin-top: 0;
+        }
+        
+        .selector-input {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .selector-input input {
+            flex: 1;
+            margin-bottom: 0;
+        }
+        
+        .selector-input button {
+            margin: 0;
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+        
+        .quick-selectors {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .quick-selectors button {
+            padding: 6px 12px;
+            font-size: 12px;
+            background: #95a5a6;
+        }
+        
+        .quick-selectors button:hover {
+            background: #7f8c8d;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 HTML Scraper with jQuery</h1>
+        <p>Parse static HTML snippets using jQuery selectors and extract data to JSON format.</p>
+        
+        <!-- HTML Input Section -->
+        <div class="section">
+            <h2>📄 HTML Input</h2>
+            <label for="html-input">Enter HTML to parse:</label>
+            <textarea id="html-input" placeholder="Paste your HTML snippet here...">
+<div class="transaction-list">
+    <div class="transaction" data-id="1">
+        <span class="description">Coffee at Starbucks</span>
+        <span class="amount">$4.95</span>
+        <span class="category">Food</span>
+        <span class="date">2025-10-15</span>
+    </div>
+    <div class="transaction" data-id="2">
+        <span class="description">Bus ticket</span>
+        <span class="amount">$2.50</span>
+        <span class="category">Transport</span>
+        <span class="date">2025-10-14</span>
+    </div>
+</div>
+            </textarea>
+            
+            <div class="examples">
+                <h4>💡 Sample HTML Snippets</h4>
+                <button onclick="loadSample('transactions')">Transaction List</button>
+                <button onclick="loadSample('table')">Expense Table</button>
+                <button onclick="loadSample('cards')">Card Layout</button>
+                <button onclick="loadSample('complex')">Complex Structure</button>
+            </div>
+        </div>
+        
+        <!-- Selector Configuration -->
+        <div class="section">
+            <h2>🎯 Selector Configuration</h2>
+            
+            <label for="container-selector">Container selector (elements to iterate over):</label>
+            <input type="text" id="container-selector" value=".transaction" 
+                   placeholder="e.g., .transaction, tr.expense-row, .card">
+            
+            <div class="quick-selectors">
+                <h4>Quick selectors:</h4>
+                <button onclick="setQuickSelector('.transaction')">Transactions</button>
+                <button onclick="setQuickSelector('tr.expense-row')">Table Rows</button>
+                <button onclick="setQuickSelector('.card')">Cards</button>
+                <button onclick="setQuickSelector('li')">List Items</button>
+                <button onclick="setQuickSelector('div[data-item]')">Data Items</button>
+            </div>
+            
+            <h3>Field Mappings</h3>
+            <div id="field-mappings">
+                <div class="selector-input">
+                    <input type="text" placeholder="Field name (e.g., description)" class="field-name" value="description">
+                    <input type="text" placeholder="jQuery selector (e.g., .description)" class="field-selector" value=".description">
+                    <select class="field-attribute">
+                        <option value="text">Text Content</option>
+                        <option value="html">HTML Content</option>
+                        <option value="value">Value Attribute</option>
+                        <option value="data-id">Data-ID Attribute</option>
+                        <option value="href">Href Attribute</option>
+                        <option value="src">Src Attribute</option>
+                        <option value="class">Class Attribute</option>
+                        <option value="custom">Custom Attribute</option>
+                    </select>
+                    <input type="text" placeholder="Custom attr" class="custom-attr" style="display:none;">
+                    <button onclick="removeFieldMapping(this)">❌</button>
+                </div>
+                <div class="selector-input">
+                    <input type="text" placeholder="Field name" class="field-name" value="amount">
+                    <input type="text" placeholder="jQuery selector" class="field-selector" value=".amount">
+                    <select class="field-attribute">
+                        <option value="text" selected>Text Content</option>
+                        <option value="html">HTML Content</option>
+                        <option value="value">Value Attribute</option>
+                        <option value="data-id">Data-ID Attribute</option>
+                        <option value="href">Href Attribute</option>
+                        <option value="src">Src Attribute</option>
+                        <option value="class">Class Attribute</option>
+                        <option value="custom">Custom Attribute</option>
+                    </select>
+                    <input type="text" placeholder="Custom attr" class="custom-attr" style="display:none;">
+                    <button onclick="removeFieldMapping(this)">❌</button>
+                </div>
+                <div class="selector-input">
+                    <input type="text" placeholder="Field name" class="field-name" value="category">
+                    <input type="text" placeholder="jQuery selector" class="field-selector" value=".category">
+                    <select class="field-attribute">
+                        <option value="text" selected>Text Content</option>
+                        <option value="html">HTML Content</option>
+                        <option value="value">Value Attribute</option>
+                        <option value="data-id">Data-ID Attribute</option>
+                        <option value="href">Href Attribute</option>
+                        <option value="src">Src Attribute</option>
+                        <option value="class">Class Attribute</option>
+                        <option value="custom">Custom Attribute</option>
+                    </select>
+                    <input type="text" placeholder="Custom attr" class="custom-attr" style="display:none;">
+                    <button onclick="removeFieldMapping(this)">❌</button>
+                </div>
+                <div class="selector-input">
+                    <input type="text" placeholder="Field name" class="field-name" value="date">
+                    <input type="text" placeholder="jQuery selector" class="field-selector" value=".date">
+                    <select class="field-attribute">
+                        <option value="text" selected>Text Content</option>
+                        <option value="html">HTML Content</option>
+                        <option value="value">Value Attribute</option>
+                        <option value="data-id">Data-ID Attribute</option>
+                        <option value="href">Href Attribute</option>
+                        <option value="src">Src Attribute</option>
+                        <option value="class">Class Attribute</option>
+                        <option value="custom">Custom Attribute</option>
+                    </select>
+                    <input type="text" placeholder="Custom attr" class="custom-attr" style="display:none;">
+                    <button onclick="removeFieldMapping(this)">❌</button>
+                </div>
+            </div>
+            
+            <button onclick="addFieldMapping()">➕ Add Field Mapping</button>
+            <button onclick="clearFieldMappings()" class="danger">🗑️ Clear All</button>
+        </div>
+        
+        <!-- Processing Options -->
+        <div class="section">
+            <h2>⚙️ Processing Options</h2>
+            
+            <label>
+                <input type="checkbox" id="remove-empty" checked>
+                Remove empty/null values from results
+            </label>
+            
+            <label>
+                <input type="checkbox" id="trim-whitespace" checked>
+                Trim whitespace from text values
+            </label>
+            
+            <label>
+                <input type="checkbox" id="parse-numbers">
+                Attempt to parse numeric values (amounts)
+            </label>
+            
+            <label>
+                <input type="checkbox" id="add-metadata" checked>
+                Add metadata (scrape timestamp, element count)
+            </label>
+            
+            <label for="id-field">Auto-generate ID field:</label>
+            <select id="id-field">
+                <option value="">No auto-ID</option>
+                <option value="id">Use 'id' field</option>
+                <option value="txn_id">Use 'txn_id' field</option>
+                <option value="item_id" selected>Use 'item_id' field</option>
+            </select>
+        </div>
+        
+        <!-- Action Buttons -->
+        <div class="section">
+            <button onclick="parseHTML()">🚀 Parse HTML</button>
+            <button onclick="testSelectors()">🧪 Test Selectors</button>
+            <button onclick="clearResults()">🗑️ Clear Results</button>
+            <button onclick="exportToFinanceTracker()">💰 Export to Finance Tracker</button>
+        </div>
+        
+        <!-- Results Section -->
+        <div id="results" class="results" style="display: none;">
+            <h3>📊 Parsing Results</h3>
+            <div id="results-summary"></div>
+            <h4>JSON Output:</h4>
+            <pre id="json-output"></pre>
+            <button onclick="copyToClipboard()">📋 Copy JSON</button>
+            <button onclick="downloadJSON()">💾 Download JSON</button>
+        </div>
+    </div>
+
+    <script>
+        // Handle attribute selection changes
+        $(document).on('change', '.field-attribute', function() {
+            const customAttr = $(this).siblings('.custom-attr');
+            if ($(this).val() === 'custom') {
+                customAttr.show().attr('placeholder', 'Enter attribute name');
+            } else {
+                customAttr.hide();
+            }
+        });
+        
+        // Sample HTML snippets
+        const samples = {
+            transactions: `<div class="transaction-list">
+    <div class="transaction" data-id="1">
+        <span class="description">Coffee at Starbucks</span>
+        <span class="amount">$4.95</span>
+        <span class="category">Food</span>
+        <span class="date">2025-10-15</span>
+    </div>
+    <div class="transaction" data-id="2">
+        <span class="description">Bus ticket downtown</span>
+        <span class="amount">$2.50</span>
+        <span class="category">Transport</span>
+        <span class="date">2025-10-14</span>
+    </div>
+</div>`,
+            
+            table: `<table class="expense-table">
+    <tbody>
+        <tr class="expense-row">
+            <td class="desc">Movie tickets</td>
+            <td class="amt">$24.00</td>
+            <td class="cat">Entertainment</td>
+            <td class="when">2025-10-12</td>
+        </tr>
+        <tr class="expense-row">
+            <td class="desc">Lunch special</td>
+            <td class="amt">$12.50</td>
+            <td class="cat">Food</td>
+            <td class="when">2025-10-11</td>
+        </tr>
+    </tbody>
+</table>`,
+            
+            cards: `<div class="cards-container">
+    <div class="card" data-type="expense">
+        <h3 class="title">Grocery shopping</h3>
+        <div class="cost">$45.67</div>
+        <div class="tag">Food</div>
+        <time class="date">2025-10-10</time>
+    </div>
+    <div class="card" data-type="expense">
+        <h3 class="title">Gas station</h3>
+        <div class="cost">$32.00</div>
+        <div class="tag">Transport</div>
+        <time class="date">2025-10-09</time>
+    </div>
+</div>`,
+            
+            complex: `<section class="financial-data">
+    <article class="expense-item" data-expense-id="exp_001">
+        <header class="item-header">
+            <h4 class="item-title">University textbooks</h4>
+            <span class="item-amount" data-currency="USD">$156.99</span>
+        </header>
+        <div class="item-meta">
+            <span class="item-category" data-category-id="books">Books</span>
+            <time class="item-date" datetime="2025-10-08">October 8, 2025</time>
+        </div>
+    </article>
+</section>`
+        };
+        
+        function loadSample(type) {
+            $('#html-input').val(samples[type]);
+            
+            // Update selectors based on sample type
+            if (type === 'table') {
+                $('#container-selector').val('tr.expense-row');
+                updateFieldMappings([
+                    {name: 'description', selector: '.desc', attribute: 'text'},
+                    {name: 'amount', selector: '.amt', attribute: 'text'},
+                    {name: 'category', selector: '.cat', attribute: 'text'},
+                    {name: 'date', selector: '.when', attribute: 'text'}
+                ]);
+            } else if (type === 'cards') {
+                $('#container-selector').val('.card');
+                updateFieldMappings([
+                    {name: 'description', selector: '.title', attribute: 'text'},
+                    {name: 'amount', selector: '.cost', attribute: 'text'},
+                    {name: 'category', selector: '.tag', attribute: 'text'},
+                    {name: 'date', selector: '.date', attribute: 'text'}
+                ]);
+            } else if (type === 'complex') {
+                $('#container-selector').val('.expense-item');
+                updateFieldMappings([
+                    {name: 'id', selector: '', attribute: 'data-expense-id'},
+                    {name: 'description', selector: '.item-title', attribute: 'text'},
+                    {name: 'amount', selector: '.item-amount', attribute: 'text'},
+                    {name: 'category', selector: '.item-category', attribute: 'text'},
+                    {name: 'date', selector: '.item-date', attribute: 'text'}
+                ]);
+            } else {
+                $('#container-selector').val('.transaction');
+                updateFieldMappings([
+                    {name: 'description', selector: '.description', attribute: 'text'},
+                    {name: 'amount', selector: '.amount', attribute: 'text'},
+                    {name: 'category', selector: '.category', attribute: 'text'},
+                    {name: 'date', selector: '.date', attribute: 'text'}
+                ]);
+            }
+        }
+        
+        function updateFieldMappings(mappings) {
+            clearFieldMappings();
+            mappings.forEach(mapping => {
+                addFieldMapping(mapping.name, mapping.selector, mapping.attribute);
+            });
+        }
+        
+        function setQuickSelector(selector) {
+            $('#container-selector').val(selector);
+        }
+        
+        function addFieldMapping(name = '', selector = '', attribute = 'text') {
+            const mappingDiv = $(`
+                <div class="selector-input">
+                    <input type="text" placeholder="Field name" class="field-name" value="${name}">
+                    <input type="text" placeholder="jQuery selector" class="field-selector" value="${selector}">
+                    <select class="field-attribute">
+                        <option value="text" ${attribute === 'text' ? 'selected' : ''}>Text Content</option>
+                        <option value="html" ${attribute === 'html' ? 'selected' : ''}>HTML Content</option>
+                        <option value="value" ${attribute === 'value' ? 'selected' : ''}>Value Attribute</option>
+                        <option value="data-id" ${attribute === 'data-id' ? 'selected' : ''}>Data-ID Attribute</option>
+                        <option value="href" ${attribute === 'href' ? 'selected' : ''}>Href Attribute</option>
+                        <option value="src" ${attribute === 'src' ? 'selected' : ''}>Src Attribute</option>
+                        <option value="class" ${attribute === 'class' ? 'selected' : ''}>Class Attribute</option>
+                        <option value="custom" ${attribute.startsWith('data-') && attribute !== 'data-id' ? 'selected' : ''}>Custom Attribute</option>
+                    </select>
+                    <input type="text" placeholder="Custom attr" class="custom-attr" style="${attribute.startsWith('data-') && attribute !== 'data-id' ? '' : 'display:none;'}" value="${attribute.startsWith('data-') && attribute !== 'data-id' ? attribute : ''}">
+                    <button onclick="removeFieldMapping(this)">❌</button>
+                </div>
+            `);
+            $('#field-mappings').append(mappingDiv);
+        }
+        
+        function removeFieldMapping(button) {
+            $(button).parent().remove();
+        }
+        
+        function clearFieldMappings() {
+            $('#field-mappings').empty();
+        }
+        
+        function testSelectors() {
+            const htmlContent = $('#html-input').val();
+            const containerSelector = $('#container-selector').val();
+            
+            if (!htmlContent.trim()) {
+                showError('Please enter HTML content to test.');
+                return;
+            }
+            
+            try {
+                const $html = $('<div>').html(htmlContent);
+                const containers = $html.find(containerSelector);
+                
+                if (containers.length === 0) {
+                    showError(`No elements found with selector: "${containerSelector}"`);
+                    return;
+                }
+                
+                let testResults = `Found ${containers.length} container element(s):\n\n`;
+                
+                containers.each(function(index) {
+                    if (index < 3) { // Show first 3 elements
+                        testResults += `Element ${index + 1}:\n`;
+                        testResults += $(this).prop('outerHTML').substring(0, 200) + '...\n\n';
+                    }
+                });
+                
+                if (containers.length > 3) {
+                    testResults += `... and ${containers.length - 3} more elements\n`;
+                }
+                
+                showResults('Selector Test Results', testResults, null, true);
+                
+            } catch (error) {
+                showError('Error testing selectors: ' + error.message);
+            }
+        }
+        
+        function parseHTML() {
+            const htmlContent = $('#html-input').val();
+            const containerSelector = $('#container-selector').val();
+            
+            if (!htmlContent.trim()) {
+                showError('Please enter HTML content to parse.');
+                return;
+            }
+            
+            if (!containerSelector.trim()) {
+                showError('Please enter a container selector.');
+                return;
+            }
+            
+            try {
+                const $html = $('<div>').html(htmlContent);
+                const containers = $html.find(containerSelector);
+                const results = [];
+                
+                if (containers.length === 0) {
+                    showError(`No elements found with selector: "${containerSelector}"`);
+                    return;
+                }
+                
+                // Get field mappings
+                const fieldMappings = [];
+                $('#field-mappings .selector-input').each(function() {
+                    const name = $(this).find('.field-name').val().trim();
+                    const selector = $(this).find('.field-selector').val().trim();
+                    const attribute = $(this).find('.field-attribute').val();
+                    const customAttr = $(this).find('.custom-attr').val().trim();
+                    
+                    if (name) {
+                        fieldMappings.push({
+                            name,
+                            selector,
+                            attribute: attribute === 'custom' ? customAttr : attribute
+                        });
+                    }
+                });
+                
+                if (fieldMappings.length === 0) {
+                    showError('Please add at least one field mapping.');
+                    return;
+                }
+                
+                // Parse each container
+                containers.each(function(index) {
+                    const $container = $(this);
+                    const item = {};
+                    
+                    // Add auto-generated ID if requested
+                    const idField = $('#id-field').val();
+                    if (idField) {
+                        item[idField] = `item_${Date.now()}_${index + 1}`;
+                    }
+                    
+                    // Extract fields
+                    fieldMappings.forEach(mapping => {
+                        let value = null;
+                        
+                        try {
+                            const $element = mapping.selector ? $container.find(mapping.selector) : $container;
+                            
+                            if ($element.length > 0) {
+                                switch (mapping.attribute) {
+                                    case 'text':
+                                        value = $element.text();
+                                        break;
+                                    case 'html':
+                                        value = $element.html();
+                                        break;
+                                    case 'value':
+                                        value = $element.val();
+                                        break;
+                                    default:
+                                        // Custom attribute
+                                        value = $element.attr(mapping.attribute);
+                                        break;
+                                }
+                            }
+                            
+                            // Process value
+                            if (value !== null && value !== undefined) {
+                                if ($('#trim-whitespace').is(':checked')) {
+                                    value = value.toString().trim();
+                                }
+                                
+                                if ($('#parse-numbers').is(':checked') && mapping.name.toLowerCase().includes('amount')) {
+                                    const numericValue = parseFloat(value.replace(/[^\d.-]/g, ''));
+                                    if (!isNaN(numericValue)) {
+                                        value = numericValue;
+                                    }
+                                }
+                            }
+                            
+                            // Add to item if not empty or if we're keeping empty values
+                            if (!$('#remove-empty').is(':checked') || (value !== null && value !== '')) {
+                                item[mapping.name] = value;
+                            }
+                            
+                        } catch (error) {
+                            console.warn(`Error extracting field "${mapping.name}":`, error);
+                        }
+                    });
+                    
+                    results.push(item);
+                });
+                
+                // Add metadata if requested
+                let finalResults = results;
+                if ($('#add-metadata').is(':checked')) {
+                    finalResults = {
+                        metadata: {
+                            scraped_at: new Date().toISOString(),
+                            total_items: results.length,
+                            container_selector: containerSelector,
+                            field_mappings: fieldMappings.map(m => ({ name: m.name, selector: m.selector }))
+                        },
+                        data: results
+                    };
+                }
+                
+                const summary = `Successfully parsed ${results.length} item(s) from HTML.`;
+                showResults('Parsing Complete', summary, finalResults);
+                
+            } catch (error) {
+                showError('Error parsing HTML: ' + error.message);
+            }
+        }
+        
+        function showResults(title, summary, data, isTest = false) {
+            $('#results').show();
+            $('#results h3').text(title);
+            $('#results-summary').html(`<p><strong>${summary}</strong></p>`);
+            
+            if (data && !isTest) {
+                $('#json-output').text(JSON.stringify(data, null, 2));
+                window.lastParsedData = data;
+            } else if (isTest) {
+                $('#json-output').text(summary);
+            }
+        }
+        
+        function showError(message) {
+            $('#results').show().addClass('error');
+            $('#results h3').text('❌ Error');
+            $('#results-summary').html(`<p><strong>${message}</strong></p>`);
+            $('#json-output').text('');
+        }
+        
+        function clearResults() {
+            $('#results').hide().removeClass('error');
+            $('#json-output').text('');
+            $('#results-summary').html('');
+            window.lastParsedData = null;
+        }
+        
+        function copyToClipboard() {
+            const jsonText = $('#json-output').text();
+            if (jsonText) {
+                navigator.clipboard.writeText(jsonText).then(() => {
+                    alert('JSON copied to clipboard!');
+                }).catch(() => {
+                    // Fallback for older browsers
+                    const textArea = document.createElement('textarea');
+                    textArea.value = jsonText;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    alert('JSON copied to clipboard!');
+                });
+            }
+        }
+        
+        function downloadJSON() {
+            const jsonText = $('#json-output').text();
+            if (jsonText) {
+                const blob = new Blob([jsonText], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `scraped_data_${new Date().toISOString().slice(0, 10)}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }
+        }
+        
+        function exportToFinanceTracker() {
+            if (!window.lastParsedData) {
+                alert('Please parse some data first!');
+                return;
+            }
+            
+            // Transform data to finance tracker format
+            let transactions = window.lastParsedData;
+            if (transactions.data) {
+                transactions = transactions.data; // Extract from metadata wrapper
+            }
+            
+            const financeData = {
+                transactions: transactions.map((item, index) => ({
+                    id: item.id || item.txn_id || item.item_id || `imported_${Date.now()}_${index}`,
+                    description: item.description || item.title || item.desc || 'Imported transaction',
+                    amount: typeof item.amount === 'number' ? item.amount : parseFloat((item.amount || '0').replace(/[^\d.-]/g, '')) || 0,
+                    category: item.category || item.cat || item.tag || 'Other',
+                    date: item.date || item.when || new Date().toISOString().slice(0, 10),
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
+                })),
+                metadata: {
+                    imported_at: new Date().toISOString(),
+                    source: 'HTML Scraper',
+                    original_count: transactions.length
+                }
+            };
+            
+            // Download as finance tracker compatible JSON
+            const blob = new Blob([JSON.stringify(financeData, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `finance_tracker_import_${new Date().toISOString().slice(0, 10)}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            alert(`Exported ${financeData.transactions.length} transactions for Finance Tracker!`);
+        }
+        
+        // Initialize with default sample
+        $(document).ready(function() {
+            console.log('HTML Scraper loaded with jQuery', $.fn.jquery);
+        });
+    </script>
+</body>
+</html>
