@@ -3,22 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#2c3e50">
+    <meta name="description" content="Student Finance Tracker - Manage your expenses with advanced search, budgeting, and analytics">
     <title>Student Finance Tracker</title>
-    <link rel="stylesheet" href="styles/main.css">
+    
+    <!-- Progressive Web App -->
+    <link rel="manifest" href="./manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Finance Tracker">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="./styles/main.css">
+    
+    <!-- Icons for PWA -->
+    <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+    <link rel="apple-touch-icon" href="icon-192.png">
 </head>
 <body>
     <!-- Skip to content link for accessibility -->
     <a href="#main-content" class="skip-link">Skip to main content</a>
-
+    
     <!-- Main header -->
     <header class="header" role="banner">
         <div class="container">
-            <h1 class="logo">Student Finance Tracker</h1>
-            <button class="menu-toggle" aria-label="Toggle navigation menu" aria-expanded="false">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
+            <h1 class="logo"> Student Finance Tracker</h1>
+            <div class="header-controls">
+                <button id="theme-toggle" class="theme-toggle" aria-label="Switch to dark theme" title="Toggle theme (Alt+T)">
+                    🌙
+                </button>
+                <button class="menu-toggle" aria-label="Toggle navigation menu" aria-expanded="false">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
         </div>
     </header>
 
@@ -45,7 +64,7 @@
             <!-- Dashboard Section -->
             <section id="dashboard" class="section active" aria-labelledby="dashboard-heading">
                 <h2 id="dashboard-heading">Financial Dashboard</h2>
-
+                
                 <!-- Quick stats -->
                 <div class="stats-grid">
                     <div class="stat-card">
@@ -94,7 +113,7 @@
             <!-- Records Section -->
             <section id="records" class="section" aria-labelledby="records-heading">
                 <h2 id="records-heading">Transaction Records</h2>
-
+                
                 <!-- Search and filters -->
                 <div class="search-controls">
                     <div class="search-group">
@@ -102,7 +121,7 @@
                         <input type="text" id="search-input" placeholder="Enter search pattern..." 
                                aria-describedby="search-help">
                         <div id="search-help" class="help-text">
-                            Try patterns like: /\\.\d{2}\b/ (cents), /(coffee|tea)/i (beverages)
+                            Try patterns like: /\.\d{2}\b/ (cents), /(coffee|tea)/i (beverages)
                         </div>
                     </div>
                     <div class="search-options">
@@ -157,10 +176,10 @@
             <!-- Add/Edit Section -->
             <section id="add-edit" class="section" aria-labelledby="form-heading">
                 <h2 id="form-heading">Add Transaction</h2>
-
+                
                 <form id="transaction-form" class="transaction-form" novalidate>
                     <input type="hidden" id="edit-id" value="">
-
+                    
                     <div class="form-group">
                         <label for="description">Description *</label>
                         <input type="text" id="description" required 
@@ -230,7 +249,7 @@
             <!-- Settings Section -->
             <section id="settings" class="section" aria-labelledby="settings-heading">
                 <h2 id="settings-heading">Settings</h2>
-
+                
                 <!-- Currency settings -->
                 <div class="settings-group">
                     <h3>Currency Settings</h3>
@@ -260,9 +279,10 @@
                     <h3>Data Management</h3>
                     <div class="data-actions">
                         <button id="export-data">Export Data (JSON)</button>
+                        <button id="export-csv">Export CSV</button>
                         <div class="import-group">
                             <label for="import-file">Import Data:</label>
-                            <input type="file" id="import-file" accept=".json">
+                            <input type="file" id="import-file" accept=".json,.csv">
                             <button id="import-data">Import</button>
                         </div>
                         <button id="clear-data" class="danger-btn">Clear All Data</button>
@@ -285,33 +305,37 @@
             <!-- About Section -->
             <section id="about" class="section" aria-labelledby="about-heading">
                 <h2 id="about-heading">About Student Finance Tracker</h2>
-
+                
                 <div class="about-content">
                     <h3>Purpose</h3>
                     <p>
                         This Student Finance Tracker helps students manage their expenses,
                         track spending patterns, and stay within budget. Built with vanilla
                         HTML, CSS, and JavaScript, it demonstrates modern web development
-                        practices including accessibility, responsive design, and clean
-                        modular architecture.
+                        practices including accessibility, responsive design, offline functionality,
+                        and clean modular architecture.
                     </p>
-
+                    
                     <h3>Features</h3>
                     <ul>
-                        <li>✅ Complete expense tracking with categories</li>
-                        <li>✅ Advanced regex search and validation</li>
-                        <li>✅ Responsive mobile-first design</li>
-                        <li>✅ Full keyboard accessibility</li>
-                        <li>✅ Data import/export with JSON validation</li>
-                        <li>✅ Multi-currency support</li>
-                        <li>✅ Spending caps and budget tracking</li>
-                        <li>✅ Real-time statistics dashboard</li>
+                        <li> - Complete expense tracking with categories</li>
+                        <li> - Advanced regex search and validation</li>
+                        <li>- Responsive mobile-first design</li>
+                        <li>- Full keyboard accessibility</li>
+                        <li>- Data import/export (JSON & CSV)</li>
+                        <li>- Multi-currency support</li>
+                        <li>- Spending caps and budget tracking</li>
+                        <li>- Real-time statistics dashboard</li>
+                        <li>- Dark/Light theme toggle</li>
+                        <li>- Offline-first functionality</li>
+                        <li>- Progressive Web App (PWA)</li>
                     </ul>
 
                     <h3>Contact Information</h3>
                     <div class="contact-info">
-                        <p>📧 Email: <a href="mailto:ucheezette@gmail.com">ucheezette@gmail.com</a></p>
-                        <p>🐙 GitHub: <a href="https://github.com/ucEzette/Student_Finance_Tracker" target="_blank" rel="noopener">github.com/ucEzette/Student_Finance_Tracker</a></p>
+                        <p> Email: <a href="mailto:ucheezette@gmail.com">ucheezette@gmail.com</a></p>
+                        <p>GitHub: <a href="https://github.com/ucEzette/Student_Finance_Tracker" target="_blank" rel="noopener">github</a></p>
+                        <p>Demo Video: <a href="https://youtu.be/" target="_blank" rel="noopener">Watch on YouTube</a></p>
                     </div>
 
                     <h3>Keyboard Navigation</h3>
@@ -321,7 +345,20 @@
                         <p><kbd>Enter/Space</kbd> - Activate buttons and links</p>
                         <p><kbd>Escape</kbd> - Close dialogs or cancel editing</p>
                         <p><kbd>Arrow keys</kbd> - Navigate within lists and tables</p>
+                        <p><kbd>Alt + T</kbd> - Toggle dark/light theme</p>
+                        <p><kbd>Alt + 1/2/3</kbd> - Navigate to Dashboard/Records/Add-Edit</p>
+                        <p><kbd>Ctrl + Enter</kbd> - Submit form (when in Add/Edit section)</p>
                     </div>
+                    
+                    <h3>Technology Stack</h3>
+                    <p>Built with modern web standards:</p>
+                    <ul>
+                        <li>Semantic HTML5 with ARIA accessibility</li>
+                        <li>CSS3 with custom properties and responsive design</li>
+                        <li>Vanilla ES6+ JavaScript with modules</li>
+                        <li>Service Worker for offline functionality</li>
+                        <li>Progressive Web App features</li>
+                    </ul>
                 </div>
             </section>
         </div>
@@ -330,11 +367,11 @@
     <!-- Footer -->
     <footer class="footer" role="contentinfo">
         <div class="container">
-            <p>&copy; 2025 Student Finance Tracker. Built with ❤️ and vanilla JavaScript.</p>
+            <p>&copy; 2025 Student Finance Tracker. Built with vanilla JavaScript.</p>
         </div>
     </footer>
 
     <!-- Loading scripts -->
-    <script type="module" src="scripts/main.js"></script>
+    <script type="module" src="./scripts/main.js"></script>
 </body>
 </html>
