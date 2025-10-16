@@ -2,11 +2,11 @@
 
 A responsive, accessible web application for tracking student expenses built with vanilla HTML, CSS, and JavaScript. This project demonstrates modern web development practices including mobile-first design, comprehensive accessibility features, and clean modular architecture.
 
-## 🚀 Live Demo
+##  Live Demo
 
 **GitHub Pages:** [https://github.com/ucEzette/Student_Finance_Tracker](https://github.com/ucEzette/Student_Finance_Tracker)
 
-## 📋 Theme: Student Finance Tracker
+## Theme: Student Finance Tracker
 
 This application helps students manage their expenses, track spending patterns, and stay within budget. It provides comprehensive financial tracking with advanced search capabilities, budget management, and insightful analytics.
 
@@ -267,6 +267,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Accessibility guidelines from WCAG 2.1
 - Design inspiration from modern financial applications
 - Community feedback and testing assistance
+### 🤝 Collaborative Credit
+
+This project was collaboratively developed by  **[ucEzette](https://github.com/ucEzette)** with research and writing assistance from **ChatGPT (OpenAI’s GPT-5 language model)** to enhance clarity, structure, and documentation quality.
 
 ---
 
