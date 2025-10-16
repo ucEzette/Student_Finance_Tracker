@@ -18,55 +18,139 @@ class FinanceTrackerApp {
         this.validators = new Validators();
         this.search = new SearchManager();
         this.stats = new StatsManager();
-
+        
         this.currentSection = 'dashboard';
         this.editingId = null;
-
+        
         this.init();
     }
-
+    
     async init() {
         try {
+            // Register service worker for offline functionality
+            await this.registerServiceWorker();
+            
+            // Initialize theme
+            this.initializeTheme();
+            
             // Load data from localStorage
             await this.loadData();
-
+            
             // Initialize UI
             this.ui.init();
-
+            
             // Set up event listeners
             this.setupEventListeners();
-
+            
             // Update dashboard
             this.updateDashboard();
-
+            
             // Show initial section
             this.showSection('dashboard');
-
+            
             console.log('Finance Tracker App initialized successfully');
         } catch (error) {
             console.error('Failed to initialize app:', error);
             this.showError('Failed to initialize application. Please refresh the page.');
         }
     }
-
+    
+    async registerServiceWorker() {
+        if ('serviceWorker' in navigator) {
+            try {
+                const registration = await navigator.serviceWorker.register('/sw.js');
+                console.log('Service Worker registered successfully:', registration);
+                
+                // Listen for service worker messages
+                navigator.serviceWorker.addEventListener('message', (event) => {
+                    this.handleServiceWorkerMessage(event.data);
+                });
+                
+                // Check for updates
+                registration.addEventListener('updatefound', () => {
+                    console.log('Service Worker update found');
+                    this.announceStatus('App update available. Refresh to get the latest version.');
+                });
+                
+            } catch (error) {
+                console.error('Service Worker registration failed:', error);
+            }
+        }
+    }
+    
+    handleServiceWorkerMessage(message) {
+        switch (message.type) {
+            case 'SYNC_COMPLETE':
+                this.announceStatus('Data synchronized successfully');
+                break;
+            case 'CACHE_UPDATED':
+                this.announceStatus('App updated for offline use');
+                break;
+        }
+    }
+    
+    initializeTheme() {
+        // Load saved theme or default to light
+        const savedTheme = localStorage.getItem('finance-tracker-theme') || 'light';
+        this.setTheme(savedTheme);
+        
+        // Update theme toggle button
+        const themeToggle = document.getElementById('theme-toggle');
+        if (themeToggle) {
+            themeToggle.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+            themeToggle.setAttribute('aria-label', 
+                savedTheme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme');
+        }
+    }
+    
+    setTheme(theme) {
+        document.documentElement.setAttribute('data-theme', theme);
+        localStorage.setItem('finance-tracker-theme', theme);
+        
+        // Update meta theme-color for mobile browsers
+        const metaThemeColor = document.querySelector('meta[name="theme-color"]');
+        if (metaThemeColor) {
+            metaThemeColor.setAttribute('content', 
+                theme === 'dark' ? '#1a1a1a' : '#2c3e50');
+        }
+    }
+    
+    toggleTheme() {
+        const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        
+        this.setTheme(newTheme);
+        
+        // Update button
+        const themeToggle = document.getElementById('theme-toggle');
+        if (themeToggle) {
+            themeToggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+            themeToggle.setAttribute('aria-label', 
+                newTheme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme');
+        }
+        
+        // Announce theme change
+        this.announceStatus(`Switched to ${newTheme} theme`);
+    }
+    
     async loadData() {
         try {
             const data = this.storage.loadTransactions();
             const settings = this.storage.loadSettings();
-
+            
             this.state.setTransactions(data);
             this.state.setSettings(settings);
-
+            
             // Update UI with loaded data
             this.ui.renderRecords(data);
             this.ui.updateSettingsUI(settings);
-
+            
         } catch (error) {
             console.error('Error loading data:', error);
             throw error;
         }
     }
-
+    
     setupEventListeners() {
         // Navigation
         document.querySelectorAll('.nav-link').forEach(link => {
@@ -76,7 +160,7 @@ class FinanceTrackerApp {
                 this.showSection(section);
             });
         });
-
+        
         // Mobile menu toggle
         const menuToggle = document.querySelector('.menu-toggle');
         const nav = document.querySelector('.nav');
@@ -85,58 +169,84 @@ class FinanceTrackerApp {
             menuToggle.setAttribute('aria-expanded', !isExpanded);
             nav.style.display = isExpanded ? 'none' : 'block';
         });
-
+        
+        // Theme toggle
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle?.addEventListener('click', () => this.toggleTheme());
+        
         // Form submission
         const form = document.getElementById('transaction-form');
         form?.addEventListener('submit', (e) => this.handleFormSubmit(e));
-
+        
         // Search functionality
         const searchInput = document.getElementById('search-input');
         const caseInsensitive = document.getElementById('case-insensitive');
         const clearSearch = document.getElementById('clear-search');
-
+        
         searchInput?.addEventListener('input', () => this.handleSearch());
         caseInsensitive?.addEventListener('change', () => this.handleSearch());
         clearSearch?.addEventListener('click', () => this.clearSearch());
-
+        
         // Sorting
         const sortField = document.getElementById('sort-field');
         const sortDirection = document.getElementById('sort-direction');
-
+        
         sortField?.addEventListener('change', () => this.handleSort());
         sortDirection?.addEventListener('click', () => this.toggleSortDirection());
-
+        
         // Spending cap
         const setCapBtn = document.getElementById('set-cap-btn');
         setCapBtn?.addEventListener('click', () => this.setSpendingCap());
-
+        
         // Settings
         const saveCurrencyBtn = document.getElementById('save-currency');
         saveCurrencyBtn?.addEventListener('click', () => this.saveCurrencySettings());
-
+        
         // Data management
         const exportBtn = document.getElementById('export-data');
+        const exportCsvBtn = document.getElementById('export-csv');
         const importBtn = document.getElementById('import-data');
         const clearBtn = document.getElementById('clear-data');
-
+        
         exportBtn?.addEventListener('click', () => this.exportData());
+        exportCsvBtn?.addEventListener('click', () => this.exportCSV());
         importBtn?.addEventListener('click', () => this.importData());
         clearBtn?.addEventListener('click', () => this.clearAllData());
-
+        
         // Regex tester
         const testRegexBtn = document.getElementById('test-regex');
         testRegexBtn?.addEventListener('click', () => this.testRegexPattern());
-
+        
         // Real-time form validation
         this.setupFormValidation();
-
+        
         // Keyboard navigation
         this.setupKeyboardNavigation();
+        
+        // Offline status
+        this.setupOfflineHandlers();
     }
-
+    
+    setupOfflineHandlers() {
+        window.addEventListener('online', () => {
+            this.announceStatus('Back online - data will sync automatically');
+            document.body.classList.remove('offline');
+        });
+        
+        window.addEventListener('offline', () => {
+            this.announceStatus('You are offline - changes will be saved locally');
+            document.body.classList.add('offline');
+        });
+        
+        // Check initial status
+        if (!navigator.onLine) {
+            document.body.classList.add('offline');
+        }
+    }
+    
     setupFormValidation() {
         const fields = ['description', 'amount', 'category', 'date'];
-
+        
         fields.forEach(fieldName => {
             const field = document.getElementById(fieldName);
             if (field) {
@@ -145,7 +255,7 @@ class FinanceTrackerApp {
             }
         });
     }
-
+    
     setupKeyboardNavigation() {
         // ESC key to cancel editing
         document.addEventListener('keydown', (e) => {
@@ -155,7 +265,7 @@ class FinanceTrackerApp {
                 }
             }
         });
-
+        
         // Enter key shortcuts
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' && e.ctrlKey) {
@@ -166,51 +276,59 @@ class FinanceTrackerApp {
                 }
             }
         });
+        
+        // Theme toggle shortcut
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 't' && e.altKey) {
+                e.preventDefault();
+                this.toggleTheme();
+            }
+        });
     }
-
+    
     showSection(sectionName) {
         // Hide all sections
         document.querySelectorAll('.section').forEach(section => {
             section.classList.remove('active');
         });
-
+        
         // Show target section
         const targetSection = document.getElementById(sectionName);
         if (targetSection) {
             targetSection.classList.add('active');
             this.currentSection = sectionName;
-
+            
             // Update navigation
             document.querySelectorAll('.nav-link').forEach(link => {
                 link.classList.remove('active');
             });
-
+            
             const activeLink = document.querySelector(`[data-section="${sectionName}"]`);
             activeLink?.classList.add('active');
-
+            
             // Section-specific initialization
             if (sectionName === 'dashboard') {
                 this.updateDashboard();
             } else if (sectionName === 'records') {
                 this.refreshRecords();
             }
-
+            
             // Announce section change for screen readers
             this.announceStatus(`Switched to ${sectionName} section`);
         }
     }
-
+    
     async handleFormSubmit(e) {
         e.preventDefault();
-
+        
         const formData = this.getFormData();
         const isValid = this.validateForm(formData);
-
+        
         if (!isValid) {
             this.announceError('Please fix the form errors before submitting');
             return;
         }
-
+        
         try {
             if (this.editingId) {
                 await this.updateTransaction(this.editingId, formData);
@@ -219,16 +337,22 @@ class FinanceTrackerApp {
                 await this.addTransaction(formData);
                 this.announceStatus('Transaction added successfully');
             }
-
+            
             this.resetForm();
             this.showSection('records');
-
+            
+            // Request background sync if available
+            if ('serviceWorker' in navigator && 'sync' in window.ServiceWorkerRegistration.prototype) {
+                const registration = await navigator.serviceWorker.ready;
+                registration.sync.register('sync-transactions');
+            }
+            
         } catch (error) {
             console.error('Error saving transaction:', error);
             this.showError('Failed to save transaction. Please try again.');
         }
     }
-
+    
     getFormData() {
         return {
             description: document.getElementById('description').value.trim(),
@@ -237,27 +361,27 @@ class FinanceTrackerApp {
             date: document.getElementById('date').value
         };
     }
-
+    
     validateForm(data) {
         let isValid = true;
-
+        
         // Validate each field
         ['description', 'amount', 'category', 'date'].forEach(field => {
             if (!this.validateField(field)) {
                 isValid = false;
             }
         });
-
+        
         return isValid;
     }
-
+    
     validateField(fieldName) {
         const field = document.getElementById(fieldName);
         const value = field.value.trim();
-
+        
         let isValid = true;
         let errorMessage = '';
-
+        
         switch (fieldName) {
             case 'description':
                 if (!this.validators.validateDescription(value)) {
@@ -265,21 +389,21 @@ class FinanceTrackerApp {
                     errorMessage = 'Description cannot have leading/trailing spaces or be empty';
                 }
                 break;
-
+                
             case 'amount':
                 if (!this.validators.validateAmount(value)) {
                     isValid = false;
                     errorMessage = 'Amount must be a valid number with up to 2 decimal places';
                 }
                 break;
-
+                
             case 'category':
                 if (!this.validators.validateCategory(value)) {
                     isValid = false;
                     errorMessage = 'Please select a valid category';
                 }
                 break;
-
+                
             case 'date':
                 if (!this.validators.validateDate(value)) {
                     isValid = false;
@@ -287,28 +411,28 @@ class FinanceTrackerApp {
                 }
                 break;
         }
-
+        
         // Update UI
         const errorElement = document.getElementById(`${fieldName}-error`);
         if (errorElement) {
             errorElement.textContent = errorMessage;
         }
-
+        
         field.classList.toggle('error', !isValid);
-
+        
         return isValid;
     }
-
+    
     clearFieldError(fieldName) {
         const field = document.getElementById(fieldName);
         const errorElement = document.getElementById(`${fieldName}-error`);
-
+        
         field.classList.remove('error');
         if (errorElement) {
             errorElement.textContent = '';
         }
     }
-
+    
     async addTransaction(data) {
         const transaction = {
             id: this.generateId(),
@@ -316,58 +440,58 @@ class FinanceTrackerApp {
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString()
         };
-
+        
         this.state.addTransaction(transaction);
         this.storage.saveTransactions(this.state.getTransactions());
         this.updateDashboard();
         this.refreshRecords();
     }
-
+    
     async updateTransaction(id, data) {
         const updatedTransaction = {
             ...this.state.getTransaction(id),
             ...data,
             updatedAt: new Date().toISOString()
         };
-
+        
         this.state.updateTransaction(id, updatedTransaction);
         this.storage.saveTransactions(this.state.getTransactions());
         this.updateDashboard();
         this.refreshRecords();
     }
-
+    
     generateId() {
         return 'txn_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
     }
-
+    
     handleSearch() {
         const query = document.getElementById('search-input').value;
         const caseInsensitive = document.getElementById('case-insensitive').checked;
-
+        
         const results = this.search.searchTransactions(
             this.state.getTransactions(),
             query,
             caseInsensitive
         );
-
+        
         this.ui.renderRecords(results);
     }
-
+    
     clearSearch() {
         document.getElementById('search-input').value = '';
         document.getElementById('case-insensitive').checked = false;
         this.refreshRecords();
     }
-
+    
     handleSort() {
         const field = document.getElementById('sort-field').value;
         const direction = document.getElementById('sort-direction').textContent === '⬇️' ? 'desc' : 'asc';
-
+        
         const transactions = this.state.getTransactions();
         const sorted = this.sortTransactions(transactions, field, direction);
         this.ui.renderRecords(sorted);
     }
-
+    
     toggleSortDirection() {
         const btn = document.getElementById('sort-direction');
         const isDesc = btn.textContent === '⬇️';
@@ -375,12 +499,12 @@ class FinanceTrackerApp {
         btn.setAttribute('aria-label', isDesc ? 'Sort ascending' : 'Sort descending');
         this.handleSort();
     }
-
+    
     sortTransactions(transactions, field, direction) {
         return [...transactions].sort((a, b) => {
             let aVal = a[field];
             let bVal = b[field];
-
+            
             if (field === 'amount') {
                 aVal = parseFloat(aVal);
                 bVal = parseFloat(bVal);
@@ -391,7 +515,7 @@ class FinanceTrackerApp {
                 aVal = aVal.toString().toLowerCase();
                 bVal = bVal.toString().toLowerCase();
             }
-
+            
             if (direction === 'desc') {
                 return bVal > aVal ? 1 : -1;
             } else {
@@ -399,75 +523,75 @@ class FinanceTrackerApp {
             }
         });
     }
-
+    
     updateDashboard() {
         const transactions = this.state.getTransactions();
         const stats = this.stats.calculateStats(transactions);
-
+        
         // Update stat cards
         document.getElementById('total-records').textContent = stats.totalRecords;
         document.getElementById('total-amount').textContent = this.formatCurrency(stats.totalAmount);
         document.getElementById('top-category').textContent = stats.topCategory || 'None';
         document.getElementById('week-trend').textContent = this.formatCurrency(stats.weekTrend);
-
+        
         // Update trend chart
         this.updateTrendChart(stats.dailyTrends);
-
+        
         // Update spending cap
         this.updateSpendingCapDisplay();
     }
-
+    
     updateTrendChart(dailyTrends) {
         const chartContainer = document.getElementById('trend-chart');
         if (!chartContainer || !dailyTrends.length) return;
-
+        
         const maxAmount = Math.max(...dailyTrends.map(d => d.amount));
-
+        
         chartContainer.innerHTML = dailyTrends.map(day => {
             const height = maxAmount > 0 ? (day.amount / maxAmount) * 100 : 0;
             return `<div class="chart-bar" style="height: ${height}%" data-value="$${day.amount.toFixed(2)}" title="${day.date}: $${day.amount.toFixed(2)}"></div>`;
         }).join('');
     }
-
+    
     setSpendingCap() {
         const capInput = document.getElementById('spending-cap');
         const cap = parseFloat(capInput.value);
-
+        
         if (isNaN(cap) || cap <= 0) {
             this.showError('Please enter a valid spending cap amount');
             return;
         }
-
+        
         this.state.setSpendingCap(cap);
         this.storage.saveSettings(this.state.getSettings());
         this.updateSpendingCapDisplay();
         this.announceStatus(`Spending cap set to ${this.formatCurrency(cap)}`);
     }
-
+    
     updateSpendingCapDisplay() {
         const settings = this.state.getSettings();
         const cap = settings.spendingCap;
-
+        
         if (!cap) {
             document.getElementById('cap-message').textContent = 'No spending cap set';
             document.getElementById('cap-bar').style.width = '0%';
             return;
         }
-
+        
         const currentMonth = new Date().toISOString().slice(0, 7); // YYYY-MM
         const monthlySpending = this.stats.getMonthlySpending(
             this.state.getTransactions(),
             currentMonth
         );
-
+        
         const percentage = Math.min((monthlySpending / cap) * 100, 100);
         const remaining = Math.max(cap - monthlySpending, 0);
-
+        
         const capBar = document.getElementById('cap-bar');
         const capMessage = document.getElementById('cap-message');
-
+        
         capBar.style.width = `${percentage}%`;
-
+        
         if (percentage >= 100) {
             capBar.className = 'cap-bar danger';
             capMessage.textContent = `Over budget by ${this.formatCurrency(monthlySpending - cap)}`;
@@ -482,21 +606,21 @@ class FinanceTrackerApp {
             capMessage.setAttribute('aria-live', 'polite');
         }
     }
-
+    
     refreshRecords() {
         const transactions = this.state.getTransactions();
         this.ui.renderRecords(transactions);
     }
-
+    
     resetForm() {
         const form = document.getElementById('transaction-form');
         form.reset();
-
+        
         // Clear errors
         ['description', 'amount', 'category', 'date'].forEach(field => {
             this.clearFieldError(field);
         });
-
+        
         // Reset form state
         this.editingId = null;
         document.getElementById('edit-id').value = '';
@@ -504,41 +628,41 @@ class FinanceTrackerApp {
         document.getElementById('cancel-btn').style.display = 'none';
         document.getElementById('form-heading').textContent = 'Add Transaction';
     }
-
+    
     editTransaction(id) {
         const transaction = this.state.getTransaction(id);
         if (!transaction) return;
-
+        
         // Populate form
         document.getElementById('description').value = transaction.description;
         document.getElementById('amount').value = transaction.amount;
         document.getElementById('category').value = transaction.category;
         document.getElementById('date').value = transaction.date;
-
+        
         // Update form state
         this.editingId = id;
         document.getElementById('edit-id').value = id;
         document.getElementById('submit-btn').textContent = 'Update Transaction';
         document.getElementById('cancel-btn').style.display = 'inline-block';
         document.getElementById('form-heading').textContent = 'Edit Transaction';
-
+        
         // Show form section
         this.showSection('add-edit');
-
+        
         // Focus first field
         document.getElementById('description').focus();
     }
-
+    
     cancelEdit() {
         this.resetForm();
         this.showSection('records');
     }
-
+    
     async deleteTransaction(id) {
         if (!confirm('Are you sure you want to delete this transaction?')) {
             return;
         }
-
+        
         try {
             this.state.deleteTransaction(id);
             this.storage.saveTransactions(this.state.getTransactions());
@@ -550,7 +674,7 @@ class FinanceTrackerApp {
             this.showError('Failed to delete transaction. Please try again.');
         }
     }
-
+    
     exportData() {
         try {
             const data = {
@@ -559,11 +683,11 @@ class FinanceTrackerApp {
                 exportDate: new Date().toISOString(),
                 version: '1.0'
             };
-
+            
             const blob = new Blob([JSON.stringify(data, null, 2)], {
                 type: 'application/json'
             });
-
+            
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
@@ -572,64 +696,86 @@ class FinanceTrackerApp {
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
-
+            
             this.announceStatus('Data exported successfully');
         } catch (error) {
             console.error('Export error:', error);
             this.showError('Failed to export data. Please try again.');
         }
     }
-
+    
+    exportCSV() {
+        try {
+            const transactions = this.state.getTransactions();
+            const csvContent = this.storage.exportToCSV(transactions);
+            
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `finance-tracker-${new Date().toISOString().slice(0, 10)}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            this.announceStatus('CSV exported successfully');
+        } catch (error) {
+            console.error('CSV export error:', error);
+            this.showError('Failed to export CSV. Please try again.');
+        }
+    }
+    
     async importData() {
         const fileInput = document.getElementById('import-file');
         const file = fileInput.files[0];
-
+        
         if (!file) {
             this.showError('Please select a file to import');
             return;
         }
-
+        
         try {
             const text = await file.text();
             const data = JSON.parse(text);
-
+            
             // Validate data structure
             if (!this.validators.validateImportData(data)) {
                 throw new Error('Invalid data format');
             }
-
+            
             // Import data
             if (data.transactions) {
                 this.state.setTransactions(data.transactions);
                 this.storage.saveTransactions(data.transactions);
             }
-
+            
             if (data.settings) {
                 this.state.setSettings({ ...this.state.getSettings(), ...data.settings });
                 this.storage.saveSettings(this.state.getSettings());
             }
-
+            
             // Refresh UI
             this.updateDashboard();
             this.refreshRecords();
             this.ui.updateSettingsUI(this.state.getSettings());
-
+            
             // Clear file input
             fileInput.value = '';
-
+            
             this.announceStatus('Data imported successfully');
-
+            
         } catch (error) {
             console.error('Import error:', error);
             this.showError('Failed to import data. Please check the file format.');
         }
     }
-
+    
     clearAllData() {
         if (!confirm('Are you sure you want to clear all data? This cannot be undone.')) {
             return;
         }
-
+        
         try {
             this.state.clearTransactions();
             this.storage.clearTransactions();
@@ -641,7 +787,7 @@ class FinanceTrackerApp {
             this.showError('Failed to clear data. Please try again.');
         }
     }
-
+    
     saveCurrencySettings() {
         const settings = {
             ...this.state.getSettings(),
@@ -651,24 +797,24 @@ class FinanceTrackerApp {
                 GBP: parseFloat(document.getElementById('gbp-rate').value)
             }
         };
-
+        
         this.state.setSettings(settings);
         this.storage.saveSettings(settings);
         this.announceStatus('Currency settings saved successfully');
     }
-
+    
     testRegexPattern() {
         const pattern = document.getElementById('test-pattern').value;
         const text = document.getElementById('test-text').value;
         const resultArea = document.getElementById('regex-result');
-
+        
         try {
             const regex = new RegExp(pattern, 'gi');
             const matches = [...text.matchAll(regex)];
-
+            
             let result = `Pattern: ${pattern}\n`;
             result += `Text: ${text}\n\n`;
-
+            
             if (matches.length > 0) {
                 result += `Found ${matches.length} match(es):\n`;
                 matches.forEach((match, index) => {
@@ -677,23 +823,23 @@ class FinanceTrackerApp {
             } else {
                 result += 'No matches found.';
             }
-
+            
             resultArea.textContent = result;
             resultArea.style.color = 'var(--success-color)';
-
+            
         } catch (error) {
             resultArea.textContent = `Error: ${error.message}`;
             resultArea.style.color = 'var(--danger-color)';
         }
     }
-
+    
     formatCurrency(amount, currency = 'USD') {
         return new Intl.NumberFormat('en-US', {
             style: 'currency',
             currency: currency
         }).format(amount);
     }
-
+    
     announceStatus(message) {
         const announcer = document.getElementById('status-announcer');
         if (announcer) {
@@ -704,7 +850,7 @@ class FinanceTrackerApp {
             }, 1000);
         }
     }
-
+    
     announceError(message) {
         const announcer = document.getElementById('alert-announcer');
         if (announcer) {
@@ -714,17 +860,16 @@ class FinanceTrackerApp {
             }, 3000);
         }
     }
-
+    
     showError(message) {
         this.announceError(message);
         console.error(message);
-        // Could also show visual error notification here
     }
 }
 
 // Initialize app when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    new FinanceTrackerApp();
+    window.app = new FinanceTrackerApp();
 });
 
 // Export for potential use in other modules
